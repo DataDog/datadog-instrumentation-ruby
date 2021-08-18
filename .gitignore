@@ -1,0 +1,12 @@
+*.gem
+.ruby-version
+.ruby-gemset
+.rvmrc
+.envrc
+Gemfile.lock
+TODO
+/.bundle/
+/.yardoc/
+/_yardoc/
+/doc/
+/pkg/

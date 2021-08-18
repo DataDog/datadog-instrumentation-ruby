@@ -1,0 +1,129 @@
+version: '3.9'
+services:
+  ruby-2.1:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:2.1
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-2.1:/usr/local/bundle
+  ruby-2.2:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:2.2
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-2.2:/usr/local/bundle
+  ruby-2.3:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:2.3
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-2.3:/usr/local/bundle
+  ruby-2.4:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:2.4
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-2.4:/usr/local/bundle
+  ruby-2.5:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:2.5
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-2.5:/usr/local/bundle
+  ruby-2.6:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:2.6
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-2.6:/usr/local/bundle
+  ruby-2.7:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:2.7
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-2.7:/usr/local/bundle
+  ruby-3.0:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:3.0
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-ruby-3.0:/usr/local/bundle
+  jruby-9.2:
+    build:
+      context: .
+      args:
+        BASE_IMAGE: delner/ruby:jruby-9.2
+    command: ["rm -f Gemfile.lock && bundle install && /bin/bash"]
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - bundle-jruby-9.2:/usr/local/bundle
+volumes:
+  bundle-ruby-2.1:
+  bundle-ruby-2.2:
+  bundle-ruby-2.3:
+  bundle-ruby-2.4:
+  bundle-ruby-2.5:
+  bundle-ruby-2.6:
+  bundle-ruby-2.7:
+  bundle-ruby-3.0:
+  bundle-jruby-9.2:
