@@ -64,7 +64,7 @@ save_bundle_checksum: &save_bundle_checksum
     command: |
       if [ "$CI_BUNDLE_CACHE_HIT" != 1 ]; then
         # Recompute gemfiles/*.lock checksum, as those files might have changed
-        cat Gemfile Gemfile.lock Appraisals gemfiles/*.gemfile.lock | md5sum > .circleci/bundle_checksum
+        cat Gemfile Gemfile.lock gemfiles/*.gemfile.lock | md5sum > .circleci/bundle_checksum
       fi
       cp .circleci/bundle_checksum /usr/local/bundle/bundle_checksum
 step_bundle_install: &step_bundle_install
@@ -88,7 +88,7 @@ step_compute_bundle_checksum: &step_compute_bundle_checksum
     # updating the gemset lock files produces extremely large commits.
     command: |
       bundle lock # Create Gemfile.lock
-      cat Gemfile Gemfile.lock Appraisals gemfiles/*.gemfile.lock | md5sum > .circleci/bundle_checksum
+      cat Gemfile Gemfile.lock gemfiles/*.gemfile.lock | md5sum > .circleci/bundle_checksum
 step_run_all_tests: &step_run_all_tests
   run:
     name: Run tests
@@ -134,17 +134,6 @@ orbs:
                 - bundle-{{ .Environment.CIRCLE_CACHE_VERSION }}-<<parameters.ruby_version>>-{{ checksum "lib/datadog/instrumentation/version.rb" }}
           - *check_exact_bundle_cache_hit
           - *step_bundle_install
-          - when:
-              condition:
-                equal: [ << parameters.edge >>, true ]
-              steps:
-                - *step_appraisal_update # Run on latest version of all gems we integrate with
-          - when:
-              condition:
-                not:
-                  equal: [ << parameters.edge >>, true ]
-              steps:
-                - *step_appraisal_install # Run on a stable set of gems we integrate with
           - *save_bundle_checksum
           - save_cache:
               key: '{{ .Environment.CIRCLE_CACHE_VERSION }}-bundled-repo-<<parameters.ruby_version>>-{{ .Environment.CIRCLE_SHA1 }}'
@@ -154,34 +143,6 @@ orbs:
               key: bundle-{{ .Environment.CIRCLE_CACHE_VERSION }}-<<parameters.ruby_version>>-{{ checksum "lib/datadog/instrumentation/version.rb" }}-{{ .Branch }}-{{ checksum ".circleci/bundle_checksum" }}
               paths:
                 - /usr/local/bundle
-      build_and_test_integration:
-        executor: docker-integration
-        parameters:
-          ruby_version:
-            description: Ruby version
-            type: string
-          integration_apps:
-            description: Integration apps
-            type: string
-        steps:
-          - checkout
-          - setup_remote_docker:
-              docker_layer_caching: true
-          - run:
-              name: Build integration base images
-              command: ./integration/script/build-images -v <<parameters.ruby_version>>
-          - run:
-              name: Build integration app images
-              command: |
-                for i in <<parameters.integration_apps>>; do
-                  ./integration/apps/$i/script/build-images -v <<parameters.ruby_version>>
-                done
-          - run:
-              name: Test integration apps
-              command: |
-                for i in <<parameters.integration_apps>>; do
-                  ./integration/apps/$i/script/ci -v <<parameters.ruby_version>>
-                done
       test:
         <<: *test_job_default
         docker:
@@ -380,17 +341,7 @@ workflows:
             - test-2.6
             - test-2.7
             - test-3.0
-            - test-jruby-9.2.0.0
             - test-jruby-9.2-latest
-            # soon™️ - test-truffleruby-21.0.0
-      - orb/changelog:
-          <<: *config-2_7
-          name: changelog
-          requires:
-            - build-2.7
-          filters:
-            branches:
-              only: /bump_to_version_.*/
       # MRI
       - orb/build:
           <<: *config-2_1
@@ -465,16 +416,6 @@ workflows:
           name: test-jruby-9.2-latest
           requires:
             - build-jruby-9.2-latest
-      # TruffleRuby
-      # soon™️
-      # - orb/build:
-      #     <<: *config-truffleruby-21_0_0
-      #     name: build-truffleruby-21.0.0
-      # - orb/test:
-      #     <<: *config-truffleruby-21_0_0
-      #     name: test-truffleruby-21.0.0
-      #     requires:
-      #       - build-truffleruby-21.0.0
       # Release jobs
       - "deploy prerelease Gem":
           <<: *filters_all_branches_and_tags
