@@ -17,7 +17,7 @@ class B
   end
 end
 
-Hook['B#hello'].add do
+Datadog::Instrumentation::Hook['B#hello'].add do
   append do |stack, env|
     puts 'X+'
     r = stack.call(env)
