@@ -27,3 +27,4 @@ Then within the development environment...
  - Run tests with `rake spec`
  - Lint with `rake rubocop`
  - Generate docs with `rake docs`
+test
